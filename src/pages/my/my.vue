@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
+import '@/utils/http'
+const getData = () => {
+  uni.request({
+    method: 'GET',
+    url: '/home/banner',
+  })
+}
 
 const memberStore = useMemberStore()
 </script>
@@ -20,9 +27,10 @@ const memberStore = useMemberStore()
       保存用户信息
     </button>
     <button @tap="memberStore.clearProfile()" size="mini" plain type="warn">清理用户信息</button>
+    <button @tap="getData()" size="mini" plain type="warn">测试数据</button>
   </view>
 </template>
 
 <style lang="scss">
-//
+//  apifox.cn.apidoc.shared-0e6ee326-d646-41bd-9214-29dnf47648fa/doc-1521513
 </style>
