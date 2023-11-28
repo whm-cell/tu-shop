@@ -28,3 +28,42 @@ const httpInterceptor = {
 
 uni.addInterceptor('request', httpInterceptor)
 uni.addInterceptor('uploadFile', httpInterceptor)
+
+interface ResponseData<T = any> {
+  code: number
+  msg: string
+  result: T
+}
+
+// 封装请求函数
+export const http = <T>(option: UniApp.RequestOptions) => {
+  return new Promise<ResponseData<T>>((resolve, reject) => {
+    uni.request({
+      ...option,
+      success: (res) => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(res.data as ResponseData<T>)
+        } else if (res.statusCode === 401) {
+          const memberStore = useMemberStore()
+          memberStore.clearProfile() // 401 清除token
+          uni.navigateTo({
+            url: '/pages/login/login',
+          }) // 去登录页面  === === 重定向页面
+        } else {
+          // 业务除了问题的阶段
+          uni.showToast({
+            title: (res.data as ResponseData<T>).msg || '请求失败',
+            icon: 'none',
+          })
+        }
+      },
+      fail: (err) => {
+        uni.showToast({
+          title: '网络错误，请稍后再试',
+          icon: 'none',
+        })
+        reject(err)
+      },
+    })
+  })
+}
