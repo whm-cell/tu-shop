@@ -2,11 +2,16 @@
 import { ref } from 'vue'
 
 const activeIndex = ref(0)
+
+// 轮播图切换时触发
+const onChang: UniHelper.SwiperOnChange = (e) => {
+  activeIndex.value = e.detail!.current //  断言detail 不可能为空！
+}
 </script>
 
 <template>
   <view class="carousel">
-    <swiper :circular="true" :autoplay="false" :interval="3000">
+    <swiper :circular="true" :autoplay="false" :interval="3000" @change="onChang">
       <swiper-item>
         <navigator url="/pages/index/index" hover-class="none" class="navigator">
           <image
