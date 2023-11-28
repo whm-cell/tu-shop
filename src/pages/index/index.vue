@@ -41,14 +41,24 @@ onLoad(() => {
 
 <template>
   <CustomNavbar />
-  <XtxSwiper :list="banerList" />
-  <CategoryPanel :list="categoryList" />
-  <HotPanel :list="hotList" />
-  <view class="index"></view>
+
+  <scroll-view class="scroll-view" scroll-y>
+    <XtxSwiper :list="banerList" />
+    <CategoryPanel :list="categoryList" />
+    <HotPanel :list="hotList" />
+    <XtxGuess />
+  </scroll-view>
 </template>
 
 <style lang="scss">
 page {
   background-color: #f7f7f7;
+  height: 100%;
+  display: flex; // 因为height设置了100%  ，所以这种是基于屏幕高度而设置的一个flex布局
+  flex-direction: column; // 改变主轴方向
+}
+
+.scroll-view {
+  flex: 1;
 }
 </style>
