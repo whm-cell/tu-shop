@@ -18,6 +18,7 @@ const memberStore = useMemberStore()
       @tap="
         memberStore.setProfile({
           nickname: '黑马先锋',
+          token: '1234567890',
         })
       "
       size="mini"
