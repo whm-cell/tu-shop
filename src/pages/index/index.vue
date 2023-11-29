@@ -7,6 +7,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import HotPanel from '@/pages/index/components/HotPanel.vue'
 import type { XtxGuessInstance } from '@/types/components'
+import PageSkeleton from '@/pages/index/components/PageSkeleton.vue'
 
 const banerList = ref<BannerItem[]>([])
 const categoryList = ref<CategoryItem[]>([])
@@ -53,12 +54,12 @@ const event_refresherrefresh = async () => {
   await Promise.all([getData(), getCategoryData(), getHotData(), guessRef.value?.getMore()])
   isTriggered.value = false
 }
-
+const isLoading = ref(false)
 // 生命周期 - onLoad - 页面加载时触发，一个页面只会调用一次
-onLoad(() => {
-  getData()
-  getCategoryData()
-  getHotData()
+onLoad(async () => {
+  isLoading.value = true
+  await Promise.all([getData(), getCategoryData(), getHotData()])
+  isLoading.value = false
 })
 </script>
 
@@ -73,10 +74,15 @@ onLoad(() => {
     class="scroll-view"
     scroll-y
   >
-    <XtxSwiper :list="banerList" />
-    <CategoryPanel :list="categoryList" />
-    <HotPanel :list="hotList" />
-    <XtxGuess ref="guessRef" />
+    <PageSkeleton v-if="isLoading" />
+    <!-- 骨架屏 isLoading是否展示骨架屏-->
+    <template v-else>
+      <!-- v-else 和v-if进行配合 -->
+      <XtxSwiper :list="banerList" />
+      <CategoryPanel :list="categoryList" />
+      <HotPanel :list="hotList" />
+      <XtxGuess ref="guessRef" />
+    </template>
   </scroll-view>
 </template>
 
