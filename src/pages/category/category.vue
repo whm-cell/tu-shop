@@ -6,6 +6,7 @@ import type { BannerItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { getCategoryTopAPi } from '@/services/category'
 import type { CategoryTopItem } from '@/types/category'
+import PageSkeleton from './components/PageSkeleton.vue'
 
 const bannerList = ref<BannerItem[]>([])
 const categoryData = ref<CategoryTopItem[]>([])
@@ -22,9 +23,12 @@ const getCategoryData = async () => {
   categoryData.value = res.result
 }
 
-onLoad(() => {
-  getBannerData()
-  getCategoryData()
+// 是否数据加载完毕
+const isFinished = ref(false)
+
+onLoad(async () => {
+  await Promise.all([getBannerData(), getCategoryData()])
+  isFinished.value = true
 })
 
 // 基于当前的下标，获取对应的二级分类
@@ -34,7 +38,7 @@ const subCategoryList = computed(() => {
 </script>
 
 <template>
-  <view class="viewport">
+  <view class="viewport" v-if="isFinished">
     <!-- 搜索框 -->
     <view class="search">
       <view class="input">
@@ -85,6 +89,7 @@ const subCategoryList = computed(() => {
       </scroll-view>
     </view>
   </view>
+  <PageSkeleton v-else />
 </template>
 
 <style lang="scss">
