@@ -10,7 +10,7 @@ const guessList = ref<GuessItem[]>([])
 // 使用ts内置函数，临时性的把可选转换为必选
 // Required<PageParams>
 const pageParams = ref<Required<PageParams>>({
-  page: 30,
+  page: 1,
   pageSize: 10,
 })
 
@@ -34,6 +34,12 @@ const getGuessData = async () => {
   }
 }
 
+const resetData = () => {
+  guessList.value = []
+  pageParams.value.page = 1
+  isFinished.value = false
+}
+
 // 组件挂在完毕后，获取猜你喜欢数据
 onMounted(() => {
   getGuessData()
@@ -41,6 +47,7 @@ onMounted(() => {
 
 // 把获取数据的方法暴露出去
 defineExpose({
+  resetData,
   getMore: getGuessData,
 })
 </script>

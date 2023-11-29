@@ -40,6 +40,19 @@ const guessRef = ref<XtxGuessInstance>()
 const onScrolltolower = () => {
   guessRef.value?.getMore()
 }
+const isTriggered = ref(false)
+const event_refresherrefresh = async () => {
+  isTriggered.value = true
+  // getData()
+  // getCategoryData()
+  // getHotData()
+  // 三个请求同时发出去，等待三个请求都完成之后，再去关闭下拉刷新
+
+  // Promise.all 只会等待一次
+  guessRef.value?.resetData()
+  await Promise.all([getData(), getCategoryData(), getHotData(), guessRef.value?.getMore()])
+  isTriggered.value = false
+}
 
 // 生命周期 - onLoad - 页面加载时触发，一个页面只会调用一次
 onLoad(() => {
@@ -52,7 +65,14 @@ onLoad(() => {
 <template>
   <CustomNavbar />
 
-  <scroll-view @scrolltolower="onScrolltolower" class="scroll-view" scroll-y>
+  <scroll-view
+    refresher-enabled
+    @refresherrefresh="event_refresherrefresh"
+    :refresher-triggered="isTriggered"
+    @scrolltolower="onScrolltolower"
+    class="scroll-view"
+    scroll-y
+  >
     <XtxSwiper :list="banerList" />
     <CategoryPanel :list="categoryList" />
     <HotPanel :list="hotList" />
