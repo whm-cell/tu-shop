@@ -4,12 +4,22 @@ import { getHomeGoodsGuessLikeApi } from '@/services/home'
 
 import { onMounted, ref } from 'vue'
 import type { GuessItem } from '@/types/home'
+import type { PageParams } from '@/types/global'
 
 const guessList = ref<GuessItem[]>([])
+// 使用ts内置函数，临时性的把可选转换为必选
+// Required<PageParams>
+const pageParams = ref<Required<PageParams>>({
+  page: 1,
+  pageSize: 10,
+})
 
 const getGuessData = async () => {
-  const res = await getHomeGoodsGuessLikeApi()
-  guessList.value = res.result.items
+  const res = await getHomeGoodsGuessLikeApi(pageParams.value)
+  // guessList.value = res.result.items
+  //  数组追加时间滚动触底加载更多
+  guessList.value.push(...res.result.items)
+  pageParams.value.page++
 }
 
 // 组件挂在完毕后，获取猜你喜欢数据
