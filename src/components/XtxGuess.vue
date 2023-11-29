@@ -10,16 +10,28 @@ const guessList = ref<GuessItem[]>([])
 // 使用ts内置函数，临时性的把可选转换为必选
 // Required<PageParams>
 const pageParams = ref<Required<PageParams>>({
-  page: 1,
+  page: 30,
   pageSize: 10,
 })
 
+const isFinished = ref(false)
+
 const getGuessData = async () => {
+  if (isFinished.value) {
+    return uni.showToast({
+      title: '没有更多数据了',
+      icon: 'none',
+    })
+  }
   const res = await getHomeGoodsGuessLikeApi(pageParams.value)
   // guessList.value = res.result.items
   //  数组追加时间滚动触底加载更多
   guessList.value.push(...res.result.items)
-  pageParams.value.page++
+  if (pageParams.value.page < res.result.pages) {
+    pageParams.value.page++
+  } else {
+    isFinished.value = true
+  }
 }
 
 // 组件挂在完毕后，获取猜你喜欢数据
@@ -53,7 +65,7 @@ defineExpose({
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> 正在加载... </view>
+  <view class="loading-text"> {{ isFinished ? '已完成' : '正在加载...' }} </view>
 </template>
 
 <style lang="scss">
