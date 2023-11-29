@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HotItem } from '@/styles/home'
+import type { HotItem } from '@/types/home'
 
 const props = defineProps<{
   list: HotItem[]

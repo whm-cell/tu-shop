@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 获取数据
-import type { CategoryItem } from '@/styles/home'
+import type { CategoryItem } from '@/types/home'
 
 const props = defineProps<{
   list: CategoryItem[]

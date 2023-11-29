@@ -1,6 +1,6 @@
-import type { BannerItem, CategoryItem, GuessItem, HotItem } from '@/styles/home'
+import type { BannerItem, CategoryItem, GuessItem, HotItem } from '@/types/home'
 import { http } from '@/utils/http'
-import type { PageParams, PageResult } from '@/styles/global'
+import type { PageParams, PageResult } from '@/types/global'
 /**
  * 首页轮播图接口
  * @param distributionSite

@@ -3,7 +3,7 @@
 import { getHomeGoodsGuessLikeApi } from '@/services/home'
 
 import { onMounted, ref } from 'vue'
-import type { GuessItem } from '@/styles/home'
+import type { GuessItem } from '@/types/home'
 
 const guessList = ref<GuessItem[]>([])
 
@@ -15,6 +15,11 @@ const getGuessData = async () => {
 // 组件挂在完毕后，获取猜你喜欢数据
 onMounted(() => {
   getGuessData()
+})
+
+// 把获取数据的方法暴露出去
+defineExpose({
+  getMore: getGuessData,
 })
 </script>
 
