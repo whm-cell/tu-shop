@@ -24,7 +24,7 @@ uni.setNavigationBarTitle({
 // 获取data
 const getHotRecommendData = async () => {
   const res = await getHotRecommendApi(currUrlMap!.url)
-  console.log(res)
+  console.log(res.result)
 }
 
 /**
