@@ -29,8 +29,24 @@ const activeIndex = ref<number>(0) // 默认选中第一个
 const getHotRecommendData = async () => {
   const res = await getHotRecommendApi(currUrlMap!.url)
   bannerPic.value = res.result.bannerPicture
-  console.log(res.result.subTypes)
   subTypes.value = res.result.subTypes
+}
+
+const onScrolltolower = async () => {
+  // 获取当前的选项
+  const currSubType = subTypes.value[activeIndex.value]
+  console.log(currSubType)
+  // 判断是否有下一页
+  if (currSubType.goodsItems.page < currSubType.goodsItems.pages) {
+    currSubType.goodsItems.page++
+    const res = await getHotRecommendApi(currUrlMap!.url, {
+      page: currSubType.goodsItems.page,
+      pageSize: currSubType.goodsItems.pageSize,
+      subType: currSubType.id,
+    })
+
+    currSubType.goodsItems.items.push(...res.result.subTypes[activeIndex.value].goodsItems.items)
+  }
 }
 
 /**
@@ -60,6 +76,7 @@ onLoad(() => {
     </view>
     <!-- 推荐列表 -->
     <scroll-view
+      @scrolltolower="onScrolltolower"
       scroll-y
       class="scroll-view"
       v-show="activeIndex === index"
