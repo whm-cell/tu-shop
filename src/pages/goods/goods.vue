@@ -34,6 +34,8 @@ const onTagImg = (url: string) => {
     current: url,
   })
 }
+
+// ref定义数据的类型可以是函数类型， 也可以是对象类型。 在类型里面定义函数的行为。
 const popup = ref<{
   // open: (type?: 'top' | 'center' | 'bottom') => void
   open: (type?: UniHelper.UniPopupType) => void
