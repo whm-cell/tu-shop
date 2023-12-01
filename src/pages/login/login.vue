@@ -4,6 +4,8 @@ import type { LoginParams } from '@/services/login'
 
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { useMemberStore } from '@/stores'
+import type { LoginResult } from '@/types/member'
 
 let code = ref<string>()
 onLoad(async () => {
@@ -19,7 +21,7 @@ const onGetPhoneNumber: UniHelper.ButtonOnGetphonenumber = async (e: any) => {
     encryptedData,
     iv,
   } as LoginParams)
-  console.log(res)
+  loginSuccess(res.result)
 }
 
 /**
@@ -27,11 +29,22 @@ const onGetPhoneNumber: UniHelper.ButtonOnGetphonenumber = async (e: any) => {
  */
 const onGetPhoneNumberSimple = async () => {
   const res = await postLoginWxSimpleApi('17615807172')
-  console.log(res)
-  await wx.showToast({
+  loginSuccess(res.result)
+}
+
+const loginSuccess = (result: LoginResult) => {
+  // console.log(res)
+  const memberStore = useMemberStore()
+  memberStore.setProfile(result)
+  uni.showToast({
     title: '登录成功',
     icon: 'success',
     duration: 2000,
+    success: () => {
+      uni.switchTab({
+        url: '/pages/my/my',
+      })
+    },
   })
 }
 </script>
