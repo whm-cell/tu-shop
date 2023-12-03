@@ -6,8 +6,8 @@ import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import HotPanel from '@/pages/index/components/HotPanel.vue'
-import type { XtxGuessInstance } from '@/types/components'
 import PageSkeleton from '@/pages/index/components/PageSkeleton.vue'
+import { useGuessList } from '@/composables'
 
 const banerList = ref<BannerItem[]>([])
 const categoryList = ref<CategoryItem[]>([])
@@ -33,14 +33,7 @@ const getHotData = async () => {
   hotList.value = res.result
 }
 
-// 获取猜你喜欢组件的实例 - instance
-const guessRef = ref<XtxGuessInstance>()
-/**
- * 触底加载更多 , 触底的时候触发
- */
-const onScrolltolower = () => {
-  guessRef.value?.getMore()
-}
+const { guessRef, onScrolltolower } = useGuessList()
 const isTriggered = ref(false)
 const event_refresherrefresh = async () => {
   isTriggered.value = true
