@@ -2,7 +2,7 @@
 // 获取屏幕边界到安全区域距离
 import { getMemberProfileApi, putMemberProfileApi } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
-import type { ProfileDetail } from '@/types/member'
+import type { Gender, ProfileDetail } from '@/types/member'
 import { ref } from 'vue'
 import { useMemberStore } from '@/stores'
 
@@ -60,7 +60,11 @@ const onAvatarImage = () => {
 const onSaveProfile = async () => {
   const res = await putMemberProfileApi({
     nickname: profileData.value?.nickname,
-    gender: profileData.value?.gender,
+    gender: profileData.value.gender,
+    birthday: profileData.value.birthday,
+    provinceCode: fullLocationCode[0],
+    cityCode: fullLocationCode[1],
+    countyCode: fullLocationCode[2],
   })
   memberStore.profile!.nickname = res.result.nickname
   setTimeout(() => {
@@ -70,6 +74,22 @@ const onSaveProfile = async () => {
     })
   }, 1000)
   await uni.navigateBack()
+}
+
+/**
+ * 拿到性别
+ */
+const onRadioGroup: UniHelper.RadioGroupOnChange = (e) => {
+  profileData.value.gender = e.detail.value as Gender
+}
+
+let fullLocationCode: [string, string, string] = ['', '', '']
+/**
+ * 城市
+ */
+const onFullLocationChange: UniHelper.RegionPickerOnChange = (e) => {
+  profileData.value.fullLocation = e.detail.value.join(' ')
+  fullLocationCode = e.detail.code!
 }
 </script>
 
@@ -106,7 +126,7 @@ const onSaveProfile = async () => {
         </view>
         <view class="form-item">
           <text class="label">性别</text>
-          <radio-group>
+          <radio-group @change="onRadioGroup">
             <label class="radio">
               <radio
                 value="男"
@@ -141,7 +161,7 @@ const onSaveProfile = async () => {
             class="picker"
             :value="profileData?.fullLocation?.split(' ')"
             mode="region"
-            @change="(e:any) =>{profileData!.fullLocation = e.detail.value.join(' ')}"
+            @change="onFullLocationChange"
           >
             <view v-if="profileData?.fullLocation">{{ profileData?.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
