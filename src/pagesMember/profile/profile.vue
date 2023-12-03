@@ -1,20 +1,19 @@
 <script setup lang="ts">
 // 获取屏幕边界到安全区域距离
-import { getMemberProfileApi } from '@/services/profile'
+import { getMemberProfileApi, putMemberProfileApi } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
 import type { ProfileDetail } from '@/types/member'
 import { ref } from 'vue'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
-const profileData = ref<ProfileDetail>()
+const profileData = ref({} as ProfileDetail)
 
 /**
  * 获取会员信息
  */
 const getMemberProfileData = async () => {
   const res = await getMemberProfileApi()
-  console.log(res.result)
   profileData.value = res.result
 }
 
@@ -52,6 +51,17 @@ const onAvatarImage = () => {
     },
   })
 }
+
+const onSaveProfile = async () => {
+  const res = await putMemberProfileApi({
+    nickname: profileData.value?.nickname,
+    gender: profileData.value?.gender,
+  })
+  await uni.showToast({
+    title: `${res.msg}`,
+    icon: 'none',
+  })
+}
 </script>
 
 <template>
@@ -82,7 +92,7 @@ const onAvatarImage = () => {
             class="input"
             type="text"
             placeholder="请填写昵称"
-            :value="profileData?.nickname"
+            v-model="profileData.nickname"
           />
         </view>
         <view class="form-item">
@@ -139,7 +149,7 @@ const onAvatarImage = () => {
         </view>
       </view>
       <!-- 提交按钮 -->
-      <button class="form-button">保 存</button>
+      <button @tap="onSaveProfile" class="form-button">保 存</button>
     </view>
   </view>
 </template>
