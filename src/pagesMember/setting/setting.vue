@@ -1,11 +1,34 @@
 <script setup lang="ts">
 //
+import { useMemberStore } from '@/stores'
+
+const memberStore = useMemberStore()
+const onLogout = () => {
+  // 退出登录
+  uni.showModal({
+    content: '是否退出登录',
+    success: (res) => {
+      if (res.confirm) {
+        // 清除本地缓存
+        // uni.removeStorageSync('token')
+        // uni.removeStorageSync('profile')
+        memberStore.clearProfile()
+        // 跳转到登录页
+        // reLaunch: 关闭所有页面，打开到应用内的某个页面
+        // uni.reLaunch({
+        //   url:'/pages/login/login'
+        // })
+        uni.navigateBack()
+      }
+    },
+  })
+}
 </script>
 
 <template>
   <view class="viewport">
     <!-- 列表1 -->
-    <view class="list" v-if="true">
+    <view class="list" v-if="memberStore.profile">
       <navigator url="/pagesMember/address/address" hover-class="none" class="item arrow">
         我的收货地址
       </navigator>
@@ -22,7 +45,7 @@
     </view>
     <!-- 操作按钮 -->
     <view class="action">
-      <view class="button">退出登录</view>
+      <view class="button" @tap="onLogout" v-if="memberStore.profile">退出登录</view>
     </view>
   </view>
 </template>
