@@ -4,6 +4,7 @@ import { getMemberProfileApi, putMemberProfileApi } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
 import type { ProfileDetail } from '@/types/member'
 import { ref } from 'vue'
+import { useMemberStore } from '@/stores'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
@@ -16,6 +17,8 @@ const getMemberProfileData = async () => {
   const res = await getMemberProfileApi()
   profileData.value = res.result
 }
+
+const memberStore = useMemberStore()
 
 onLoad(() => {
   getMemberProfileData()
@@ -39,7 +42,9 @@ const onAvatarImage = () => {
               title: '上传成功',
               icon: 'none',
             })
-            profileData.value!.avatar = JSON.parse(res.data).result.avatar
+            let avatar = JSON.parse(res.data).result.avatar
+            profileData.value!.avatar = avatar
+            memberStore.profile!.avatar = avatar
           } else {
             uni.showToast({
               title: '上传失败',
@@ -57,10 +62,14 @@ const onSaveProfile = async () => {
     nickname: profileData.value?.nickname,
     gender: profileData.value?.gender,
   })
-  await uni.showToast({
-    title: `${res.msg}`,
-    icon: 'none',
-  })
+  memberStore.profile!.nickname = res.result.nickname
+  setTimeout(() => {
+    uni.showToast({
+      title: '保存成功',
+      icon: 'none',
+    })
+  }, 1000)
+  await uni.navigateBack()
 }
 </script>
 
