@@ -43,7 +43,7 @@ const submit = async () => {
     icon: 'none',
     timeout: 2000,
     success: () => {
-      uni.setStorageSync('address', res.result)
+      uni.navigateBack()
     },
   })
 }
