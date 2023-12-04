@@ -20,6 +20,16 @@ const props = defineProps<{
 uni.setNavigationBarTitle({
   title: `${props.id ? '修改' : '新增'}收货地址`,
 })
+
+const onReginChange: UniHelper.RegionPickerOnChange = (e) => {
+  form.value.fullLocation = e.detail.value.join(' ')
+  const [provinceCode, cityCode, countyCode] = e.detail.code!
+  Object.assign(form.value, {
+    provinceCode,
+    cityCode,
+    countyCode,
+  }) // 一次性赋值 三个属性 ， 实现数据合并
+}
 </script>
 
 <template>
@@ -28,26 +38,31 @@ uni.setNavigationBarTitle({
       <!-- 表单内容 -->
       <view class="form-item">
         <text class="label">收货人</text>
-        <input class="input" placeholder="请填写收货人姓名" value="" />
+        <input class="input" placeholder="请填写收货人姓名" v-model="form.receiver" />
       </view>
       <view class="form-item">
         <text class="label">手机号码</text>
-        <input class="input" placeholder="请填写收货人手机号码" value="" />
+        <input class="input" placeholder="请填写收货人手机号码" v-model="form.contact" />
       </view>
       <view class="form-item">
         <text class="label">所在地区</text>
-        <picker class="picker" mode="region" value="">
-          <view v-if="false">广东省 广州市 天河区</view>
+        <picker
+          @change="onReginChange"
+          class="picker"
+          mode="region"
+          :value="form.fullLocation.split(' ')"
+        >
+          <view v-if="form.fullLocation">{{ form.fullLocation }}</view>
           <view v-else class="placeholder">请选择省/市/区(县)</view>
         </picker>
       </view>
       <view class="form-item">
         <text class="label">详细地址</text>
-        <input class="input" placeholder="街道、楼牌号等信息" value="" />
+        <input class="input" placeholder="街道、楼牌号等信息" v-model="form.address" />
       </view>
       <view class="form-item">
         <label class="label">设为默认地址</label>
-        <switch class="switch" color="#27ba9b" :checked="true" />
+        <switch class="switch" color="#27ba9b" :checked="form.isDefault" />
       </view>
     </form>
   </view>
