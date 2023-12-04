@@ -15,6 +15,7 @@ const profileData = ref({} as ProfileDetail)
  */
 const getMemberProfileData = async () => {
   const res = await getMemberProfileApi()
+  console.log(res)
   profileData.value = res.result
 }
 
@@ -62,9 +63,10 @@ const onSaveProfile = async () => {
     nickname: profileData.value?.nickname,
     gender: profileData.value.gender,
     birthday: profileData.value.birthday,
-    provinceCode: fullLocationCode[0],
-    cityCode: fullLocationCode[1],
-    countyCode: fullLocationCode[2],
+    provinceCode: fullLocationCode[0] === '' ? undefined : fullLocationCode[0],
+    cityCode: fullLocationCode[1] === '' ? undefined : fullLocationCode[1],
+    countyCode: fullLocationCode[2] === '' ? undefined : fullLocationCode[2],
+    profession: profileData.value.profession,
   })
   memberStore.profile!.nickname = res.result.nickname
   setTimeout(() => {
@@ -173,7 +175,7 @@ const onFullLocationChange: UniHelper.RegionPickerOnChange = (e) => {
             class="input"
             type="text"
             placeholder="请填写职业"
-            :value="profileData?.profession"
+            v-model="profileData.profession"
           />
         </view>
       </view>
