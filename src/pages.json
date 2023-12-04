@@ -114,6 +114,19 @@
             "navigationBarTextStyle": "white", // 导航栏字体颜色
             "navigationBarTitleText": "个人信息"
           }
+        },
+        {
+          "path": "address/address",
+          "style": {
+            "navigationBarTitleText": "地址管理"
+          }
+        },
+        {
+          "path": "address-form/address-form"
+          // 这个页面不需要写死导航栏标题，因为这个页面是动态的，需要传入参数
+//          "style": {
+//            "navigationBarTitleText": "地址表单"
+//          }
         }
       ]
     }
