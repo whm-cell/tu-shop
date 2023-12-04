@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { postMemberAddressApi } from '@/services/address'
 
 // 表单数据
 const form = ref({
@@ -29,6 +30,22 @@ const onReginChange: UniHelper.RegionPickerOnChange = (e) => {
     cityCode,
     countyCode,
   }) // 一次性赋值 三个属性 ， 实现数据合并
+}
+
+const onSwitchChange: UniHelper.SwitchOnChange = (e) => {
+  form.value.isDefault = e.detail.value ? 1 : 0
+}
+
+const submit = async () => {
+  const res = await postMemberAddressApi(form.value)
+  uni.showToast({
+    title: '保存成功',
+    icon: 'none',
+    timeout: 2000,
+    success: () => {
+      uni.setStorageSync('address', res.result)
+    },
+  })
 }
 </script>
 
@@ -62,12 +79,17 @@ const onReginChange: UniHelper.RegionPickerOnChange = (e) => {
       </view>
       <view class="form-item">
         <label class="label">设为默认地址</label>
-        <switch class="switch" color="#27ba9b" :checked="form.isDefault" />
+        <switch
+          @change="onSwitchChange"
+          class="switch"
+          color="#27ba9b"
+          :checked="form.isDefault === 1"
+        />
       </view>
     </form>
   </view>
   <!-- 提交按钮 -->
-  <button class="button">保存并使用</button>
+  <button class="button" @tap="submit">保存并使用</button>
 </template>
 
 <style lang="scss">
