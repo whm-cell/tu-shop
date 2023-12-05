@@ -58,9 +58,15 @@ const openPopup = (name: typeof popupName.value) => {
   popupName.value = name
   popup.value?.open()
 }
+
+// 是否显示sku
+const isShowSku = ref(false)
 </script>
 
 <template>
+  <!-- sku 弹窗组件 -->
+  <vk-data-goods-sku-popup v-model="isShowSku" />
+
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
     <view class="goods">
