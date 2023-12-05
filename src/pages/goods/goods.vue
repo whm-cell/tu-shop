@@ -6,6 +6,7 @@ import type { GoodsResult } from '@/types/goods'
 import { ref } from 'vue'
 import AddressPanel from '@/pages/goods/components/AddressPanel.vue'
 import ServicePanel from '@/pages/goods/components/ServicePanel.vue'
+import type { SkuPopupLocaldata } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
@@ -18,6 +19,30 @@ const goodsData = ref<GoodsResult>()
 const getGoodsData = async () => {
   const res = await getGoodsDetailApi(query.id)
   goodsData.value = res.result
+
+  // 处理成sku组件所需要的数据格式
+  localdata.value = {
+    _id: res.result.id,
+    name: res.result.name,
+    goods_thumb: res.result.mainPictures[0],
+    spec_list: res.result.specs.map((item) => {
+      return {
+        name: item.name,
+        list: item.values,
+      }
+    }),
+    sku_list: res.result.skus.map((item) => {
+      return {
+        _id: item.id,
+        goods_id: res.result.id,
+        goods_name: res.result.name,
+        image: item.picture,
+        price: item.price * 100,
+        stock: item.inventory,
+        sku_name_arr: item.specs.map((spec) => spec.valueName),
+      }
+    }),
+  }
 }
 // 轮播图变化时，swiperChange 事件
 const currentIndex = ref(0)
@@ -61,11 +86,33 @@ const openPopup = (name: typeof popupName.value) => {
 
 // 是否显示sku
 const isShowSku = ref(false)
+
+const localdata = ref({} as SkuPopupLocaldata)
+
+enum SkuModel {
+  both = 1, // 两个按钮都显示
+  cart = 2, //
+  buy = 3,
+}
+// 按钮的模式
+const mode = ref<SkuModel>(SkuModel.buy)
+
+// 打开sku弹出，修改下模式按钮的函数
+const openSkuPopup = (model: SkuModel) => {
+  isShowSku.value = true
+  mode.value = model
+}
 </script>
 
 <template>
   <!-- sku 弹窗组件 -->
-  <vk-data-goods-sku-popup v-model="isShowSku" />
+  <vk-data-goods-sku-popup
+    v-model="isShowSku"
+    :localdata="localdata"
+    :mode="mode"
+    add-cart-background-color="#ffa868"
+    buy-now-background-color="#27ba9b"
+  />
 
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
@@ -96,7 +143,7 @@ const isShowSku = ref(false)
 
       <!-- 操作面板 -->
       <view class="action">
-        <view class="item arrow">
+        <view @click="openSkuPopup(SkuModel.both)" class="item arrow">
           <text class="label">选择</text>
           <text class="text ellipsis"> 请选择商品规格 </text>
         </view>
@@ -170,8 +217,8 @@ const isShowSku = ref(false)
       </navigator>
     </view>
     <view class="buttons">
-      <view class="addcart"> 加入购物车 </view>
-      <view class="buynow"> 立即购买 </view>
+      <view @click="openSkuPopup(SkuModel.cart)" class="addcart"> 加入购物车 </view>
+      <view @click="openSkuPopup(SkuModel.buy)" class="buynow"> 立即购买 </view>
     </view>
   </view>
 
