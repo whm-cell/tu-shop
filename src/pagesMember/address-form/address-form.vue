@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { postMemberAddressApi } from '@/services/address'
+import {
+  getMemberAddressByIdApi,
+  postMemberAddressApi,
+  putMemberAddressByIdApi,
+} from '@/services/address'
+import { onLoad } from '@dcloudio/uni-app'
 
 // 表单数据
 const form = ref({
@@ -22,6 +27,14 @@ uni.setNavigationBarTitle({
   title: `${props.id ? '修改' : '新增'}收货地址`,
 })
 
+// 获取收货地址详情数据的函数
+const getMemberAddressByIdData = async () => {
+  if (props.id) {
+    const res = await getMemberAddressByIdApi(props.id)
+    Object.assign(form.value, res.result)
+  }
+}
+
 const onReginChange: UniHelper.RegionPickerOnChange = (e) => {
   form.value.fullLocation = e.detail.value.join(' ')
   const [provinceCode, cityCode, countyCode] = e.detail.code!
@@ -37,9 +50,13 @@ const onSwitchChange: UniHelper.SwitchOnChange = (e) => {
 }
 
 const submit = async () => {
-  const res = await postMemberAddressApi(form.value)
+  if (props.id) {
+    await putMemberAddressByIdApi(props.id, form.value)
+  } else {
+    await postMemberAddressApi(form.value)
+  }
   uni.showToast({
-    title: '保存成功',
+    title: `${props.id ? '修改' : '新增'}收货地址成功`,
     icon: 'none',
     timeout: 2000,
     success: () => {
@@ -47,6 +64,10 @@ const submit = async () => {
     },
   })
 }
+
+onLoad(() => {
+  getMemberAddressByIdData()
+})
 </script>
 
 <template>
