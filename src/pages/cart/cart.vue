@@ -1,17 +1,17 @@
 <script setup lang="ts">
 //获取会员的store
 import { useMemberStore } from '@/stores'
-import { getMemberCartAPI } from '@/services/cart'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import type { CartItem } from '@/types/cart'
 import { ref } from 'vue'
+import { getMemberCartApi } from '@/services/cart'
 
 const memberStore = useMemberStore()
 
 const cartData = ref<CartItem[]>([])
 
 const getMemberCartData = async () => {
-  const res = await getMemberCartAPI()
+  const res = await getMemberCartApi()
   cartData.value = res.result
 }
 
