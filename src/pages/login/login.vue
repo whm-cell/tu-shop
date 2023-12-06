@@ -41,9 +41,10 @@ const loginSuccess = (result: LoginResult) => {
     icon: 'success',
     duration: 2000,
     success: () => {
-      uni.switchTab({
-        url: '/pages/my/my',
-      })
+      // uni.switchTab({
+      //   // url: '/pages/my/my',
+      // })
+      uni.navigateBack()
     },
   })
 }
