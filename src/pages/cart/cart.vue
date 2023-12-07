@@ -3,8 +3,17 @@
 import { useMemberStore } from '@/stores'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import type { CartItem } from '@/types/cart'
-import { ref } from 'vue'
-import { deleteMemberCartApi, getMemberCartApi } from '@/services/cart'
+import { computed, ref } from 'vue'
+import {
+  deleteMemberCartApi,
+  getMemberCartApi,
+  putMemberCartBySkuIdAPI,
+  putMemberCartSelectedAPI,
+} from '@/services/cart'
+import type {
+  InputNumberBox,
+  InputNumberBoxEvent,
+} from '@/components/vk-data-input-number-box/vk-data-input-number-box'
 
 const memberStore = useMemberStore()
 
@@ -37,6 +46,31 @@ const onDeleteCart = (skuId: string) => {
     },
   })
 }
+
+// 修改商品数量的时候触发
+const onUpdateCart = async (ev: InputNumberBoxEvent) => {
+  await putMemberCartBySkuIdAPI(ev.index, { count: ev.value })
+}
+const onChangeSelected = (item: CartItem) => {
+  item.selected = !item.selected
+  // 后端数据更新
+  putMemberCartBySkuIdAPI(item.skuId, { selected: item.selected })
+}
+
+// 计算全选状态
+const isAllSelected = computed(() => {
+  // every: 数组中的每一项都满足条件，才返回true
+  return cartData.value.length && cartData.value.every((item) => item.selected)
+})
+
+const onChangeSelectedAll = () => {
+  // 1. 计算全选状态
+  const selected = !isAllSelected.value
+  // 2. 更新每一项的选中状态
+  cartData.value.forEach((item) => (item.selected = selected))
+  // 3. 后端数据更新
+  putMemberCartSelectedAPI({ selected })
+}
 </script>
 
 <template>
@@ -57,7 +91,11 @@ const onDeleteCart = (skuId: string) => {
             <!-- 商品信息 -->
             <view class="goods">
               <!-- 选中状态 -->
-              <text class="checkbox" :class="{ checked: item.selected }"></text>
+              <text
+                class="checkbox"
+                @click="onChangeSelected(item)"
+                :class="{ checked: item.selected }"
+              ></text>
               <navigator
                 :url="`/pages/goods/goods?id=${item.id}`"
                 hover-class="none"
@@ -72,9 +110,13 @@ const onDeleteCart = (skuId: string) => {
               </navigator>
               <!-- 商品数量 -->
               <view class="count">
-                <text class="text">-</text>
-                <input class="input" type="number" :value="item.count.toString()" />
-                <text class="text">+</text>
+                <vk-data-input-number-box
+                  v-model="item.count"
+                  :min="1"
+                  :max="item.stock"
+                  @change="onUpdateCart"
+                  :index="item.skuId"
+                />
               </view>
             </view>
             <!-- 右侧删除按钮 -->
@@ -96,7 +138,9 @@ const onDeleteCart = (skuId: string) => {
       </view>
       <!-- 吸底工具栏 -->
       <view class="toolbar">
-        <text class="all" :class="{ checked: true }">全选</text>
+        <text class="all" @click="onChangeSelectedAll" :class="{ checked: isAllSelected }"
+          >全选</text
+        >
         <text class="text">合计:</text>
         <text class="amount">100</text>
         <view class="button-grounp">
