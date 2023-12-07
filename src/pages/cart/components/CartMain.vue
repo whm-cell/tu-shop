@@ -1,6 +1,5 @@
 <script setup lang="ts">
 //获取会员的store
-import { useMemberStore } from '@/stores'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import type { CartItem } from '@/types/cart'
 import { computed, ref } from 'vue'
@@ -14,7 +13,9 @@ import type {
   InputNumberBox,
   InputNumberBoxEvent,
 } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
+import { useMemberStore } from '@/stores'
 
+const { safeAreaInsets } = uni.getSystemInfoSync()
 const memberStore = useMemberStore()
 
 const cartData = ref<CartItem[]>([])
@@ -104,6 +105,10 @@ const gotoPayment = () => {
     url: '/pages/order-confirm/order-confirm',
   })
 }
+
+const query = defineProps<{
+  t: number | `${number}`
+}>()
 </script>
 
 <template>
@@ -170,7 +175,10 @@ const gotoPayment = () => {
         </navigator>
       </view>
       <!-- 吸底工具栏 -->
-      <view class="toolbar">
+      <view
+        class="toolbar"
+        :style="{ paddingBottom: Number(t) === 1 ? safeAreaInsets?.bottom + 'px' : '' }"
+      >
         <text class="all" @click="onChangeSelectedAll" :class="{ checked: isAllSelected }"
           >全选</text
         >
