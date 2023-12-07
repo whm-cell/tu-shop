@@ -102,7 +102,7 @@ const gotoPayment = () => {
   }
   // 2. 跳转到订单确认页面
   uni.navigateTo({
-    url: '/pages/order-confirm/order-confirm',
+    url: '/pagesOrder/create/create',
   })
 }
 
