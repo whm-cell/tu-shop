@@ -71,6 +71,39 @@ const onChangeSelectedAll = () => {
   // 3. 后端数据更新
   putMemberCartSelectedAPI({ selected })
 }
+
+// 计算选中单品列表
+const selectedCartData = computed(() => {
+  return cartData.value.filter((item) => item.selected)
+})
+
+// 计算选中单品总数量
+const selectedCartCount = computed(() => {
+  // reduce 用于计算数组中的总和
+  return selectedCartData.value.reduce((total, item) => total + item.count, 0)
+})
+
+// 计算选中单品总价格
+const selectedCartAmount = computed(() => {
+  return selectedCartData.value
+    .reduce((total, item) => total + item.nowPrice * item.count, 0)
+    .toFixed(2)
+})
+
+const gotoPayment = () => {
+  // 1. 判断是否有选中的商品
+  if (!selectedCartData.value.length) {
+    uni.showToast({
+      title: '请选择商品',
+      icon: 'none',
+    })
+    return
+  }
+  // 2. 跳转到订单确认页面
+  uni.navigateTo({
+    url: '/pages/order-confirm/order-confirm',
+  })
+}
 </script>
 
 <template>
@@ -142,9 +175,15 @@ const onChangeSelectedAll = () => {
           >全选</text
         >
         <text class="text">合计:</text>
-        <text class="amount">100</text>
+        <text class="amount">{{ selectedCartAmount }}</text>
         <view class="button-grounp">
-          <view class="button payment-button" :class="{ disabled: true }"> 去结算(10) </view>
+          <view
+            class="button payment-button"
+            @click="gotoPayment"
+            :class="{ disabled: !selectedCartCount }"
+          >
+            去结算({{ selectedCartCount }})
+          </view>
         </view>
       </view>
     </template>
