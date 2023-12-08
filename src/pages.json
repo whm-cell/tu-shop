@@ -151,6 +151,13 @@
             "navigationStyle": "custom", // 自定义导航栏 ,隐藏默认导航栏
             "navigationBarTitleText": "订单详情"
           }
+        },
+        {
+          "path": "payment/payment",
+          "style": {
+            "navigationStyle": "custom", // 自定义导航栏 ,隐藏默认导航栏
+            "navigationBarTitleText": "支付成功"
+          }
         }
       ]
     }
