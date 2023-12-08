@@ -85,6 +85,13 @@ const getOrderDetail = async () => {
 onLoad(() => {
   getOrderDetail()
 })
+
+// 订单倒计时
+const onTimeUp = () => {
+  // 倒计时结束后,重新获取订单详情
+  detailData.value.orderState = OrderState.YiQuXiao
+  getOrderDetail()
+}
 </script>
 
 <template>
@@ -111,7 +118,14 @@ onLoad(() => {
           <view class="tips">
             <text class="money">应付金额: ¥ 99.00</text>
             <text class="time">支付剩余</text>
-            00 时 29 分 59 秒
+            <uni-countdown
+              color="#fff"
+              splitor-color="#fff"
+              :show-day="false"
+              :show-colon="false"
+              :second="detailData.countdown"
+              @timeup="onTimeUp"
+            />
           </view>
           <view class="button">去支付</view>
         </template>
