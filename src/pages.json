@@ -144,13 +144,14 @@
           "style": {
             "navigationBarTitleText": "填写订单"
           }
+        },
+        {
+          "path": "detail/detail",
+          "style": {
+            "navigationStyle": "custom", // 自定义导航栏 ,隐藏默认导航栏
+            "navigationBarTitleText": "订单详情"
+          }
         }
-//        {
-//          "path": "order-detail/order-detail",
-//          "style": {
-//            "navigationBarTitleText": "订单详情"
-//          }
-//        }
       ]
     }
   ],
